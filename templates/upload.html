@@ -1,0 +1,12 @@
+<h1>Upload Track</h1>
+<p><a href="/artist/dashboard">Back to Dashboard</a></p>
+
+{% if error %}
+  <p style="color:red">{{ error }}</p>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+  <input name="title" placeholder="Track title" required>
+  <input type="file" name="audio_file" accept=".mp3,.wav,.m4a" required>
+  <button type="submit">Upload</button>
+</form>

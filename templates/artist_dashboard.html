@@ -1,0 +1,21 @@
+<h1>My Tracks</h1>
+<p>{{ current_user.username }} (artist) | <a href="/logout">Logout</a></p>
+<p><a href="/artist/upload">Upload a new track</a></p>
+
+{% if tracks %}
+  <ul>
+  {% for track in tracks %}
+    <li>
+      {{ track.title }} —
+      {% if track.approved %}
+        <strong style="color:green">Approved</strong>
+      {% else %}
+        <strong style="color:orange">Pending approval</strong>
+      {% endif %}
+      | Plays: {{ track.play_count }}
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>You haven't uploaded anything yet.</p>
+{% endif %}

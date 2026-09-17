@@ -1,0 +1,8 @@
+<h1>Admin Dashboard</h1>
+<p>{{ current_user.username }} (admin) | <a href="/logout">Logout</a></p>
+<p><a href="/admin/approve">Review pending uploads ({{ pending_count }})</a></p>
+<ul>
+  <li>Total users: {{ total_users }}</li>
+  <li>Total tracks: {{ total_tracks }}</li>
+  <li>Pending approval: {{ pending_count }}</li>
+</ul>

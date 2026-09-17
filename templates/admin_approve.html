@@ -1,0 +1,16 @@
+<h1>Pending Approvals</h1>
+<p><a href="/admin/dashboard">Back to Dashboard</a></p>
+
+{% if tracks %}
+  <ul>
+  {% for track in tracks %}
+    <li>
+      {{ track.title }} by {{ track.artist.username }}
+      <a href="/admin/approve/{{ track.id }}">Approve</a> |
+      <a href="/admin/reject/{{ track.id }}">Reject</a>
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>Nothing pending — all caught up!</p>
+{% endif %}

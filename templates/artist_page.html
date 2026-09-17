@@ -1,0 +1,9 @@
+<h1>{{ artist.username }}</h1>
+<p><a href="/">Home</a></p>
+<ul>
+{% for track in tracks %}
+  <li>{{ track.title }} {% if track.audio_file %}<audio controls src="{{ track.audio_file }}"></audio>{% endif %}</li>
+{% else %}
+  <li>No approved tracks yet.</li>
+{% endfor %}
+</ul>

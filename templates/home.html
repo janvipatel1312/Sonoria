@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    .topbar { display: flex; gap: 15px; align-items: center; margin-bottom: 25px; }
+    .topbar input[type="text"] { flex: 1; padding: 10px; font-size: 16px; }
+    .topbar button { padding: 10px 20px; }
+
+    .singer-selector { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0 20px 0; }
+    .singer-chip {
+      flex: 0 0 auto; padding: 10px 18px; border-radius: 20px;
+      background: #eee; text-decoration: none; color: #333; white-space: nowrap;
+    }
+    .singer-chip:hover { background: #ddd; }
+
+    .row-title { font-size: 20px; font-weight: bold; margin: 25px 0 10px 0; }
+    .scroll-row {
+      display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;
+      scroll-snap-type: x mandatory;
+    }
+    .track-card {
+      flex: 0 0 auto; width: 180px; scroll-snap-align: start;
+      border: 1px solid #ddd; border-radius: 8px; padding: 12px;
+    }
+    .track-card .title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+    .track-card .artist { font-size: 12px; color: #666; margin-bottom: 8px; }
+    .track-card audio { width: 100%; }
+    .empty-msg { color: #888; font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <form method="GET" action="/search" style="flex:1; display:flex; gap:10px;">
+      <input type="text" name="q" placeholder="Search for a song or artist...">
+      <button type="submit">Search</button>
+    </form>
+    {% if current_user.is_authenticated %}
+      <span>{{ current_user.username }} ({{ current_user.role }})</span> | <a href="/logout">Logout</a>
+    {% else %}
+      <a href="/login">Login</a> | <a href="/signup">Sign Up</a>
+    {% endif %}
+  </div>
+
+  <!-- Singer selector -->
+  <div class="singer-selector">
+    {% for singer in singers %}
+      <a class="singer-chip" href="/artist/{{ singer.id }}">{{ singer.username }}</a>
+    {% else %}
+      <span class="empty-msg">No artists yet</span>
+    {% endfor %}
+  </div>
+
+  <!-- Recently played (logged-in with history) OR nothing (falls back to Trending below) -->
+  {% if recently_played %}
+    <div class="row-title">Recently Played</div>
+    <div class="scroll-row">
+      {% for track in recently_played %}
+        <div class="track-card">
+          <div class="title">{{ track.title }}</div>
+          <div class="artist">{{ track.artist.username }}</div>
+          {% if track.audio_file %}<audio controls src="{{ track.audio_file }}"></audio>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Trending Now -->
+  <div class="row-title">Trending Now</div>
+  <div class="scroll-row">
+    {% for track in trending %}
+      <div class="track-card">
+        <div class="title">{{ track.title }}</div>
+        <div class="artist">{{ track.artist.username }}</div>
+        {% if track.audio_file %}<audio controls src="{{ track.audio_file }}"></audio>{% endif %}
+        <a href="/play/{{ track.id }}">▶ Play (counts a play)</a>
+      </div>
+    {% else %}
+      <span class="empty-msg">No tracks yet — check back soon!</span>
+    {% endfor %}
+  </div>
+
+  <!-- Viral on Reels/Shorts (proxy: most recently added, clearly labeled) -->
+  <div class="row-title">Viral on Reels &amp; Shorts</div>
+  <div class="scroll-row">
+    {% for track in viral_shorts %}
+      <div class="track-card">
+        <div class="title">{{ track.title }}</div>
+        <div class="artist">{{ track.artist.username }}</div>
+        {% if track.audio_file %}<audio controls src="{{ track.audio_file }}"></audio>{% endif %}
+      </div>
+    {% else %}
+      <span class="empty-msg">Nothing here yet</span>
+    {% endfor %}
+  </div>
+
+  <script>
+    // Pause all other audio players whenever one starts playing
+    document.querySelectorAll("audio").forEach(function (audio) {
+      audio.addEventListener("play", function () {
+        document.querySelectorAll("audio").forEach(function (other) {
+          if (other !== audio) other.pause();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

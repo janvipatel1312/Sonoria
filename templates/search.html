@@ -1,0 +1,38 @@
+<h1>Search Music</h1>
+<p><a href="/">Home</a></p>
+
+<form method="GET">
+  <input name="q" value="{{ query }}" placeholder="Search for a song or artist...">
+  <button type="submit">Search</button>
+</form>
+
+{% if error %}
+  <p style="color:red">{{ error }}</p>
+{% elif query and not results %}
+  <p>No results found for "{{ query }}".</p>
+{% endif %}
+
+{% if results %}
+  <ul>
+  {% for r in results %}
+    <li>
+      {{ r.trackName }} — {{ r.artistName }}
+      {% if r.previewUrl %}
+        <audio controls src="{{ r.previewUrl }}"></audio>
+      {% else %}
+        (preview unavailable)
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+<script>
+  document.querySelectorAll("audio").forEach(function (audio) {
+    audio.addEventListener("play", function () {
+      document.querySelectorAll("audio").forEach(function (other) {
+        if (other !== audio) other.pause();
+      });
+    });
+  });
+</script>
